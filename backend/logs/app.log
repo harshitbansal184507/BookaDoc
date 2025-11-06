@@ -1,0 +1,115 @@
+2025-11-06 10:56:24 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 10:56:25 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 10:56:25 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 10:56:25 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 10:56:25 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 10:56:25 | ERROR    | app.main:lifespan:23 - LLM Configuration Error: ANTHROPIC_API_KEY is required when using Anthropic provider
+2025-11-06 10:59:29 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 10:59:30 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 10:59:30 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 10:59:30 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 10:59:30 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 10:59:30 | ERROR    | app.main:lifespan:23 - LLM Configuration Error: ANTHROPIC_API_KEY is required when using Anthropic provider
+2025-11-06 10:59:50 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 10:59:51 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 10:59:51 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 10:59:51 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 10:59:51 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 10:59:51 | ERROR    | app.main:lifespan:23 - LLM Configuration Error: ANTHROPIC_API_KEY is required when using Anthropic provider
+2025-11-06 11:01:22 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:01:23 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:01:23 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 11:01:23 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 11:01:23 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 11:01:23 | INFO     | app.main:lifespan:20 - LLM Provider: anthropic
+2025-11-06 11:01:23 | INFO     | app.main:lifespan:21 - LLM Model: claude-sonnet-4-5-20250929
+2025-11-06 11:05:26 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 11:05:27 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:05:27 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 11:05:27 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 11:05:27 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 11:05:27 | INFO     | app.main:lifespan:20 - LLM Provider: anthropic
+2025-11-06 11:05:27 | INFO     | app.main:lifespan:21 - LLM Model: claude-sonnet-4-5-20250929
+2025-11-06 11:05:51 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 11:05:51 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:05:52 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 11:05:52 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 11:05:52 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 11:05:52 | INFO     | app.main:lifespan:20 - LLM Provider: anthropic
+2025-11-06 11:05:52 | INFO     | app.main:lifespan:21 - LLM Model: claude-sonnet-4-5-20250929
+2025-11-06 11:05:53 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 11:05:54 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:05:54 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 11:05:54 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 11:05:54 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 11:05:54 | INFO     | app.main:lifespan:20 - LLM Provider: anthropic
+2025-11-06 11:05:54 | INFO     | app.main:lifespan:21 - LLM Model: claude-sonnet-4-5-20250929
+2025-11-06 11:06:10 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 11:06:11 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:06:11 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 11:06:11 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 11:06:11 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 11:06:11 | INFO     | app.main:lifespan:20 - LLM Provider: anthropic
+2025-11-06 11:06:11 | INFO     | app.main:lifespan:21 - LLM Model: claude-sonnet-4-5-20250929
+2025-11-06 11:06:12 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 11:06:13 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:06:13 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 11:06:13 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 11:06:13 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 11:06:13 | INFO     | app.main:lifespan:20 - LLM Provider: anthropic
+2025-11-06 11:06:13 | INFO     | app.main:lifespan:21 - LLM Model: claude-sonnet-4-5-20250929
+2025-11-06 11:06:48 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 11:06:48 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:06:49 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 11:06:49 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 11:06:49 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 11:06:49 | INFO     | app.main:lifespan:20 - LLM Provider: anthropic
+2025-11-06 11:06:49 | INFO     | app.main:lifespan:21 - LLM Model: claude-sonnet-4-5-20250929
+2025-11-06 11:06:55 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 11:06:56 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:06:56 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 11:06:56 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 11:06:56 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 11:06:56 | INFO     | app.main:lifespan:20 - LLM Provider: anthropic
+2025-11-06 11:06:56 | INFO     | app.main:lifespan:21 - LLM Model: claude-sonnet-4-5-20250929
+2025-11-06 11:07:07 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 11:14:11 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:14:11 | INFO     | app.services.llm_service:__init__:19 - LLM Service initialized with Anthropic Claude
+2025-11-06 11:14:46 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 11:14:46 | INFO     | app.services.llm_service:__init__:19 - LLM Service initialized with Anthropic Claude
+2025-11-06 11:14:49 | INFO     | app.services.appointment_service:__init__:28 - Appointment Service initialized
+2025-11-06 11:14:53 | ERROR    | app.services.llm_service:_generate_anthropic:81 - Anthropic API error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CUr74XKZGrYTLxgGX7pUV'}
+2025-11-06 11:14:53 | ERROR    | app.services.llm_service:generate_response:55 - LLM generation error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CUr74XKZGrYTLxgGX7pUV'}
+2025-11-06 20:43:02 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 20:43:03 | INFO     | app.services.llm_service:__init__:19 - LLM Service initialized with Anthropic Claude
+2025-11-06 20:43:03 | INFO     | app.services.appointment_service:__init__:28 - Appointment Service initialized
+2025-11-06 20:43:03 | ERROR    | app.services.llm_service:_generate_anthropic:81 - Anthropic API error: "Could not resolve authentication method. Expected either api_key or auth_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"
+2025-11-06 20:43:03 | ERROR    | app.services.llm_service:generate_response:55 - LLM generation error: "Could not resolve authentication method. Expected either api_key or auth_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"
+2025-11-06 20:46:40 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 20:46:41 | INFO     | app.services.llm_service:__init__:19 - LLM Service initialized with Anthropic Claude
+2025-11-06 20:46:41 | INFO     | app.services.appointment_service:__init__:28 - Appointment Service initialized
+2025-11-06 20:46:42 | ERROR    | app.services.llm_service:_generate_anthropic:81 - Anthropic API error: "Could not resolve authentication method. Expected either api_key or auth_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"
+2025-11-06 20:46:42 | ERROR    | app.services.llm_service:generate_response:55 - LLM generation error: "Could not resolve authentication method. Expected either api_key or auth_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"
+2025-11-06 20:54:01 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 20:54:02 | INFO     | app.services.llm_service:__init__:19 - LLM Service initialized with Anthropic Claude
+2025-11-06 20:54:02 | INFO     | app.services.appointment_service:__init__:28 - Appointment Service initialized
+2025-11-06 20:54:03 | ERROR    | app.services.llm_service:_generate_anthropic:81 - Anthropic API error: "Could not resolve authentication method. Expected either api_key or auth_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"
+2025-11-06 20:54:03 | ERROR    | app.services.llm_service:generate_response:55 - LLM generation error: "Could not resolve authentication method. Expected either api_key or auth_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"
+2025-11-06 20:56:02 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 20:56:03 | INFO     | app.services.llm_service:__init__:15 - LLM Service initialized with OpenAI model: claude-3-5-sonnet-20241022
+2025-11-06 20:56:03 | INFO     | app.services.appointment_service:__init__:25 - Appointment Service initialized
+2025-11-06 20:56:12 | ERROR    | app.services.llm_service:generate_response:44 - OpenAI API error: Error code: 401 - {'error': {'message': "You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.", 'type': 'invalid_request_error', 'param': None, 'code': None}}
+2025-11-06 20:57:34 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 20:57:35 | INFO     | app.services.llm_service:__init__:15 - LLM Service initialized with OpenAI model: claude-3-5-sonnet-20241022
+2025-11-06 20:57:35 | INFO     | app.services.appointment_service:__init__:25 - Appointment Service initialized
+2025-11-06 20:57:37 | ERROR    | app.services.llm_service:generate_response:44 - OpenAI API error: Error code: 401 - {'error': {'message': "You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.", 'type': 'invalid_request_error', 'param': None, 'code': None}}
+2025-11-06 20:58:29 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 20:58:30 | INFO     | app.services.llm_service:__init__:15 - LLM Service initialized with OpenAI model: gpt-4o-mini
+2025-11-06 20:58:30 | INFO     | app.services.appointment_service:__init__:25 - Appointment Service initialized
+2025-11-06 20:58:31 | ERROR    | app.services.llm_service:generate_response:44 - OpenAI API error: Error code: 401 - {'error': {'message': "You didn't provide an API key. You need to provide your API key in an Authorization header using Bearer auth (i.e. Authorization: Bearer YOUR_KEY), or as the password field (with blank username) if you're accessing the API from your browser and are prompted for a username and password. You can obtain an API key from https://platform.openai.com/account/api-keys.", 'type': 'invalid_request_error', 'param': None, 'code': None}}
+2025-11-06 21:00:07 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:00:07 | INFO     | app.services.llm_service:__init__:15 - LLM Service initialized with OpenAI model: gpt-4o-mini
+2025-11-06 21:00:08 | INFO     | app.services.appointment_service:__init__:25 - Appointment Service initialized
+2025-11-06 21:00:13 | INFO     | app.services.appointment_service:get_available_slots:189 - Found 16 available slots
+2025-11-06 21:00:13 | INFO     | app.services.appointment_service:create_appointment:62 - Appointment created: 06fc1cf7-d8e8-41f3-8f70-e69c1925bf2f
+2025-11-06 21:00:13 | INFO     | app.services.appointment_service:update_appointment_status:107 - Appointment 06fc1cf7-d8e8-41f3-8f70-e69c1925bf2f status updated to confirmed
