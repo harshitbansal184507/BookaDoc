@@ -10,6 +10,12 @@ from .conversation import (
     ConversationContext,
     AgentType
 )
+from .doctor import (
+    Doctor,
+    Specialization,
+    DoctorAvailability,
+    DoctorResponse
+)
 
 __all__ = [
     "AppointmentRequest",
@@ -20,4 +26,8 @@ __all__ = [
     "ConversationMessage",
     "ConversationContext",
     "AgentType"
+     "Doctor",
+    "Specialization",
+    "DoctorAvailability",
+    "DoctorResponse"
 ]

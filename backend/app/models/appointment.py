@@ -43,6 +43,7 @@ class AppointmentSlot(BaseModel):
     start_time: time
     end_time: time
     doctor_name: Optional[str] = "Dr. Smith"
+    doctor_id: str 
     is_available: bool = True
     
     def __str__(self):
@@ -63,6 +64,7 @@ class Appointment(BaseModel):
     appointment_time: time
     duration_minutes: int = 30
     doctor_name: str = "Dr. Smith"
+    doctor_id: str 
     reason: Optional[str] = None
     
     # Status

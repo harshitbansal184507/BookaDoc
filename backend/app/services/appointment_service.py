@@ -9,13 +9,17 @@ from app.models.appointment import (
     AppointmentStatus,
     AppointmentResponse
 )
+from app.models.doctor import Doctor
 from app.config import settings
 from app.utils.logger import app_logger as logger
 
 
 class AppointmentService:
+    """Service for managing appointments."""
     
     def __init__(self):
+        """Initialize appointment service with in-memory storage."""
+        # In-memory storage (replace with database later)
         self.appointments: Dict[str, Appointment] = {}
         self.booked_slots: List[Dict[str, Any]] = []
         
@@ -30,36 +34,64 @@ class AppointmentService:
         patient_phone: str,
         appointment_date: date,
         appointment_time: time,
+        doctor: Doctor,  # Changed from doctor_name to doctor object
         reason: Optional[str] = None,
-        patient_email: Optional[str] = None,
-        doctor_name: str = "Dr. Smith"
+        patient_email: Optional[str] = None
     ) -> AppointmentResponse:
-      
+        """
+        Create a new appointment.
+        
+        Args:
+            patient_name: Patient's full name
+            patient_phone: Patient's phone number
+            appointment_date: Date of appointment
+            appointment_time: Time of appointment
+            doctor: Doctor object
+            reason: Reason for visit
+            patient_email: Patient's email (optional)
+            
+        Returns:
+            AppointmentResponse with success status and appointment details
+        """
         try:
-            if not self._is_slot_available(appointment_date, appointment_time):
+            # Check if doctor is available on this day
+            day_of_week = appointment_date.weekday()
+            if not doctor.is_available_on_day(day_of_week):
+                return AppointmentResponse(
+                    success=False,
+                    message=f"Dr. {doctor.name} is not available on this day",
+                    error="Doctor not available"
+                )
+            
+            # Check if slot is available
+            if not self._is_slot_available(appointment_date, appointment_time, doctor.doctor_id):
                 return AppointmentResponse(
                     success=False,
                     message="This time slot is not available",
                     error="Slot already booked"
                 )
             
+            # Create appointment
             appointment = Appointment(
                 patient_name=patient_name,
                 patient_phone=patient_phone,
                 patient_email=patient_email,
                 appointment_date=appointment_date,
                 appointment_time=appointment_time,
-                doctor_name=doctor_name,
+                doctor_name=f"Dr. {doctor.name}",
+                doctor_id=doctor.doctor_id,  # Store doctor ID
                 reason=reason,
                 status=AppointmentStatus.SCHEDULED,
-                duration_minutes=settings.DEFAULT_APPOINTMENT_DURATION
+                duration_minutes=doctor.consultation_duration
             )
             
+            # Store appointment
             self.appointments[appointment.appointment_id] = appointment
             
-            self._mark_slot_booked(appointment_date, appointment_time)
+            # Mark slot as booked
+            self._mark_slot_booked(appointment_date, appointment_time, doctor.doctor_id)
             
-            logger.info(f"Appointment created: {appointment.appointment_id}")
+            logger.info(f"Appointment created: {appointment.appointment_id} with Dr. {doctor.name}")
             
             return AppointmentResponse(
                 success=True,
@@ -82,6 +114,13 @@ class AppointmentService:
     def get_all_appointments(self) -> List[Appointment]:
         """Get all appointments."""
         return list(self.appointments.values())
+    
+    def get_appointments_by_doctor(self, doctor_id: str) -> List[Appointment]:
+        """Get all appointments for a specific doctor."""
+        return [
+            apt for apt in self.appointments.values()
+            if apt.doctor_id == doctor_id
+        ]
     
     def update_appointment_status(
         self,
@@ -124,8 +163,13 @@ class AppointmentService:
             )
         
         # Free up the slot
-        self._free_slot(appointment.appointment_date, appointment.appointment_time)
+        self._free_slot(
+            appointment.appointment_date,
+            appointment.appointment_time,
+            appointment.doctor_id
+        )
         
+        # Update status
         appointment.status = AppointmentStatus.CANCELLED
         appointment.updated_at = datetime.now()
         
@@ -139,17 +183,17 @@ class AppointmentService:
     
     def get_available_slots(
         self,
+        doctor: Doctor,
         start_date: date,
-        num_days: int = 7,
-        doctor_name: Optional[str] = None
+        num_days: int = 7
     ) -> List[AppointmentSlot]:
         """
-        Get available appointment slots.
+        Get available appointment slots for a specific doctor.
         
         Args:
+            doctor: Doctor object
             start_date: Starting date to check
             num_days: Number of days to look ahead
-            doctor_name: Filter by doctor (optional)
             
         Returns:
             List of available slots
@@ -158,9 +202,10 @@ class AppointmentService:
         
         for day_offset in range(num_days):
             check_date = start_date + timedelta(days=day_offset)
+            day_of_week = check_date.weekday()
             
-            # Skip weekends (Saturday=5, Sunday=6)
-            if check_date.weekday() >= 5:
+            # Check if doctor is available on this day
+            if not doctor.is_available_on_day(day_of_week):
                 continue
             
             # Generate slots for this day
@@ -170,35 +215,36 @@ class AppointmentService:
                 slot_time = time(current_hour, 0)
                 
                 # Check if slot is available
-                if self._is_slot_available(check_date, slot_time):
+                if self._is_slot_available(check_date, slot_time, doctor.doctor_id):
                     slot = AppointmentSlot(
                         date=check_date,
                         start_time=slot_time,
                         end_time=time(
-                            current_hour,
-                            settings.DEFAULT_APPOINTMENT_DURATION
-                        ) if current_hour == settings.CLINIC_CLOSE_HOUR - 1 
-                        else time(current_hour + 1, 0),
-                        doctor_name=doctor_name or "Dr. Smith",
+                            (current_hour + 1) % 24, 0
+                        ),
+                        doctor_name=f"Dr. {doctor.name}",
+                        doctor_id=doctor.doctor_id,
                         is_available=True
                     )
                     available_slots.append(slot)
                 
                 current_hour += 1
         
-        logger.info(f"Found {len(available_slots)} available slots")
+        logger.info(f"Found {len(available_slots)} available slots for Dr. {doctor.name}")
         return available_slots
     
     def find_slots_by_preference(
         self,
+        doctor: Doctor,
         preferred_date: Optional[date] = None,
         preferred_time: Optional[str] = None,
         num_slots: int = 3
     ) -> List[AppointmentSlot]:
         """
-        Find slots matching user preferences.
+        Find slots matching user preferences for a specific doctor.
         
         Args:
+            doctor: Doctor object
             preferred_date: Preferred date (or start from today)
             preferred_time: Preferred time of day ("morning", "afternoon", "evening")
             num_slots: Number of slots to return
@@ -207,7 +253,7 @@ class AppointmentService:
             List of matching slots
         """
         start_date = preferred_date or date.today()
-        all_slots = self.get_available_slots(start_date, num_days=14)
+        all_slots = self.get_available_slots(doctor, start_date, num_days=14)
         
         # Filter by time preference
         if preferred_time:
@@ -227,26 +273,45 @@ class AppointmentService:
         # Return requested number of slots
         return all_slots[:num_slots]
     
-    def _is_slot_available(self, appointment_date: date, appointment_time: time) -> bool:
-        """Check if a specific slot is available."""
+    def _is_slot_available(
+        self,
+        appointment_date: date,
+        appointment_time: time,
+        doctor_id: str
+    ) -> bool:
+        """Check if a specific slot is available for a doctor."""
         for booked in self.booked_slots:
             if (booked["date"] == appointment_date and 
-                booked["time"] == appointment_time):
+                booked["time"] == appointment_time and
+                booked["doctor_id"] == doctor_id):
                 return False
         return True
     
-    def _mark_slot_booked(self, appointment_date: date, appointment_time: time):
-        """Mark a slot as booked."""
+    def _mark_slot_booked(
+        self,
+        appointment_date: date,
+        appointment_time: time,
+        doctor_id: str
+    ):
+        """Mark a slot as booked for a specific doctor."""
         self.booked_slots.append({
             "date": appointment_date,
-            "time": appointment_time
+            "time": appointment_time,
+            "doctor_id": doctor_id
         })
     
-    def _free_slot(self, appointment_date: date, appointment_time: time):
-        """Free up a booked slot."""
+    def _free_slot(
+        self,
+        appointment_date: date,
+        appointment_time: time,
+        doctor_id: str
+    ):
+        """Free up a booked slot for a specific doctor."""
         self.booked_slots = [
             slot for slot in self.booked_slots
-            if not (slot["date"] == appointment_date and slot["time"] == appointment_time)
+            if not (slot["date"] == appointment_date and 
+                   slot["time"] == appointment_time and
+                   slot["doctor_id"] == doctor_id)
         ]
 
 

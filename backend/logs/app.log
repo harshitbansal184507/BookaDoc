@@ -113,3 +113,110 @@
 2025-11-06 21:00:13 | INFO     | app.services.appointment_service:get_available_slots:189 - Found 16 available slots
 2025-11-06 21:00:13 | INFO     | app.services.appointment_service:create_appointment:62 - Appointment created: 06fc1cf7-d8e8-41f3-8f70-e69c1925bf2f
 2025-11-06 21:00:13 | INFO     | app.services.appointment_service:update_appointment_status:107 - Appointment 06fc1cf7-d8e8-41f3-8f70-e69c1925bf2f status updated to confirmed
+2025-11-06 21:04:02 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:04:04 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:04:04 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 21:04:04 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 21:04:04 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 21:04:04 | INFO     | app.main:lifespan:20 - LLM Provider: openai
+2025-11-06 21:04:04 | INFO     | app.main:lifespan:21 - LLM Model: gpt-4o-mini
+2025-11-06 21:06:22 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 21:06:23 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:06:23 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 21:06:23 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 21:06:23 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 21:06:23 | INFO     | app.main:lifespan:20 - LLM Provider: openai
+2025-11-06 21:06:23 | INFO     | app.main:lifespan:21 - LLM Model: gpt-4o-mini
+2025-11-06 21:06:57 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 21:06:59 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:06:59 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 21:06:59 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 21:06:59 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 21:06:59 | INFO     | app.main:lifespan:20 - LLM Provider: openai
+2025-11-06 21:06:59 | INFO     | app.main:lifespan:21 - LLM Model: gpt-4o-mini
+2025-11-06 21:07:01 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 21:07:03 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:07:03 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 21:07:03 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 21:07:03 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 21:07:03 | INFO     | app.main:lifespan:20 - LLM Provider: openai
+2025-11-06 21:07:03 | INFO     | app.main:lifespan:21 - LLM Model: gpt-4o-mini
+2025-11-06 21:07:20 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 21:07:22 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:07:22 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 21:07:22 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 21:07:22 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 21:07:22 | INFO     | app.main:lifespan:20 - LLM Provider: openai
+2025-11-06 21:07:22 | INFO     | app.main:lifespan:21 - LLM Model: gpt-4o-mini
+2025-11-06 21:07:56 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 21:07:58 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:07:58 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 21:07:58 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 21:07:58 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 21:07:58 | INFO     | app.main:lifespan:20 - LLM Provider: openai
+2025-11-06 21:07:58 | INFO     | app.main:lifespan:21 - LLM Model: gpt-4o-mini
+2025-11-06 21:08:03 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 21:08:05 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:08:05 | INFO     | app.main:lifespan:13 - Starting BookaDoc v0.1.0
+2025-11-06 21:08:05 | INFO     | app.main:lifespan:14 - Environment: development
+2025-11-06 21:08:05 | INFO     | app.main:lifespan:15 - Debug mode: True
+2025-11-06 21:08:05 | INFO     | app.main:lifespan:20 - LLM Provider: openai
+2025-11-06 21:08:05 | INFO     | app.main:lifespan:21 - LLM Model: gpt-4o-mini
+2025-11-06 21:09:04 | INFO     | app.main:lifespan:29 - Shutting down BookaDoc
+2025-11-06 21:09:05 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:11:09 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:11:48 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:15:32 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:15:53 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:16:45 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:17:16 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:21:03 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:22:32 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:22:32 | INFO     | app.services.appointment_service:__init__:25 - Appointment Service initialized
+2025-11-06 21:22:32 | INFO     | app.main:lifespan:14 - Starting BookaDoc v0.1.0
+2025-11-06 21:22:32 | INFO     | app.main:lifespan:15 - Environment: development
+2025-11-06 21:22:32 | INFO     | app.main:lifespan:16 - Debug mode: True
+2025-11-06 21:22:32 | INFO     | app.main:lifespan:21 - LLM Provider: openai
+2025-11-06 21:22:32 | INFO     | app.main:lifespan:22 - LLM Model: gpt-4o-mini
+2025-11-06 21:23:49 | INFO     | app.api.routes:create_appointment:32 - Creating appointment for harshit
+2025-11-06 21:23:49 | INFO     | app.services.appointment_service:get_available_slots:189 - Found 80 available slots
+2025-11-06 21:23:49 | INFO     | app.services.appointment_service:create_appointment:62 - Appointment created: e14a6f18-c2d5-4aa0-8e06-65a4b465adba
+2025-11-06 21:26:50 | INFO     | app.services.appointment_service:get_available_slots:189 - Found 79 available slots
+2025-11-06 21:29:08 | INFO     | app.main:lifespan:30 - Shutting down BookaDoc
+2025-11-06 21:29:10 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:29:10 | INFO     | app.services.appointment_service:__init__:25 - Appointment Service initialized
+2025-11-06 21:29:10 | INFO     | app.main:lifespan:14 - Starting BookaDoc v0.1.0
+2025-11-06 21:29:10 | INFO     | app.main:lifespan:15 - Environment: development
+2025-11-06 21:29:10 | INFO     | app.main:lifespan:16 - Debug mode: True
+2025-11-06 21:29:10 | INFO     | app.main:lifespan:21 - LLM Provider: openai
+2025-11-06 21:29:10 | INFO     | app.main:lifespan:22 - LLM Model: gpt-4o-mini
+2025-11-06 21:29:12 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-06 21:29:12 | INFO     | app.services.appointment_service:__init__:25 - Appointment Service initialized
+2025-11-06 21:29:12 | INFO     | app.main:lifespan:14 - Starting BookaDoc v0.1.0
+2025-11-06 21:29:12 | INFO     | app.main:lifespan:15 - Environment: development
+2025-11-06 21:29:12 | INFO     | app.main:lifespan:16 - Debug mode: True
+2025-11-06 21:29:12 | INFO     | app.main:lifespan:21 - LLM Provider: openai
+2025-11-06 21:29:12 | INFO     | app.main:lifespan:22 - LLM Model: gpt-4o-mini
+2025-11-07 07:00:20 | INFO     | app.main:lifespan:30 - Shutting down BookaDoc
+2025-11-07 07:25:29 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-07 07:25:29 | INFO     | app.services.doctor_service:__init__:13 - Doctor Service initialized with 5 doctors
+2025-11-07 07:25:29 | INFO     | app.services.appointment_service:__init__:29 - Appointment Service initialized
+2025-11-07 07:25:29 | INFO     | app.services.appointment_service:get_available_slots:233 - Found 8 available slots for Dr. Rajesh Kumar
+2025-11-07 07:25:29 | INFO     | app.services.appointment_service:create_appointment:94 - Appointment created: 09d7cd9c-1ec0-437e-9b26-fca48e7a401b with Dr. Priya Sharma
+2025-11-07 07:27:36 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-07 07:27:36 | INFO     | app.services.doctor_service:__init__:13 - Doctor Service initialized with 5 doctors
+2025-11-07 07:27:37 | INFO     | app.services.appointment_service:__init__:29 - Appointment Service initialized
+2025-11-07 07:27:37 | INFO     | app.main:lifespan:14 - Starting BookaDoc v0.1.0
+2025-11-07 07:27:37 | INFO     | app.main:lifespan:15 - Environment: development
+2025-11-07 07:27:37 | INFO     | app.main:lifespan:16 - Debug mode: True
+2025-11-07 07:27:37 | INFO     | app.main:lifespan:21 - LLM Provider: openai
+2025-11-07 07:27:37 | INFO     | app.main:lifespan:22 - LLM Model: gpt-4o-mini
+2025-11-07 09:25:27 | INFO     | app.main:lifespan:30 - Shutting down BookaDoc
+2025-11-07 09:25:30 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-11-07 09:25:30 | INFO     | app.services.doctor_service:__init__:13 - Doctor Service initialized with 5 doctors
+2025-11-07 09:25:30 | INFO     | app.services.appointment_service:__init__:29 - Appointment Service initialized
+2025-11-07 09:25:30 | INFO     | app.main:lifespan:14 - Starting BookaDoc v0.1.0
+2025-11-07 09:25:30 | INFO     | app.main:lifespan:15 - Environment: development
+2025-11-07 09:25:30 | INFO     | app.main:lifespan:16 - Debug mode: True
+2025-11-07 09:25:30 | INFO     | app.main:lifespan:21 - LLM Provider: openai
+2025-11-07 09:25:30 | INFO     | app.main:lifespan:22 - LLM Model: gpt-4o-mini

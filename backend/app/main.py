@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.config import settings
 from app.utils.logger import app_logger as logger
+from app.api import api_router, ws_router
 
 
 @asynccontextmanager
@@ -45,6 +46,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include routers
+app.include_router(api_router)
+app.include_router(ws_router)
 
 
 @app.get("/")
