@@ -21,20 +21,10 @@ class AppointmentRequest(BaseModel):
     patient_email: Optional[str] = None
     reason: Optional[str] = Field(None, max_length=500)
     preferred_date: Optional[date] = None
-    preferred_time: Optional[str] = None  # e.g., "morning", "afternoon", "evening"
+    preferred_time: Optional[str] = None 
     doctor_preference: Optional[str] = None
     
-    @validator('patient_phone')
-    def validate_phone(cls, v):
-        """Validate phone number format."""
-        # Remove spaces and dashes
-        cleaned = v.replace(" ", "").replace("-", "")
-        if not cleaned.isdigit():
-            raise ValueError("Phone number must contain only digits")
-        if len(cleaned) < 10:
-            raise ValueError("Phone number must be at least 10 digits")
-        return cleaned
-
+    
 
 class AppointmentSlot(BaseModel):
     """Available appointment time slot."""
@@ -42,7 +32,7 @@ class AppointmentSlot(BaseModel):
     date: date
     start_time: time
     end_time: time
-    doctor_name: Optional[str] = "Dr. Smith"
+    doctor_name: Optional[str]
     doctor_id: str 
     is_available: bool = True
     
@@ -54,16 +44,14 @@ class Appointment(BaseModel):
     """Complete appointment record."""
     appointment_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     
-    # Patient Information
     patient_name: str
     patient_phone: str
     patient_email: Optional[str] = None
     
-    # Appointment Details
     appointment_date: date
     appointment_time: time
     duration_minutes: int = 30
-    doctor_name: str = "Dr. Smith"
+    doctor_name: str
     doctor_id: str 
     reason: Optional[str] = None
     

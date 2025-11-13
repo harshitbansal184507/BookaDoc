@@ -1,97 +1,90 @@
 from typing import List, Optional, Dict, Any
 from datetime import datetime, date, time, timedelta
+from bson import ObjectId
 import pytz
 
 from app.models.appointment import (
     Appointment,
     AppointmentSlot,
-    AppointmentRequest,
     AppointmentStatus,
     AppointmentResponse
 )
-from app.models.doctor import Doctor
 from app.config import settings
 from app.utils.logger import app_logger as logger
+from app.db.mongodb import get_database
 
 
 class AppointmentService:
-    """Service for managing appointments."""
+    """Service for managing appointments with MongoDB."""
     
     def __init__(self):
-        """Initialize appointment service with in-memory storage."""
-        # In-memory storage (replace with database later)
-        self.appointments: Dict[str, Appointment] = {}
-        self.booked_slots: List[Dict[str, Any]] = []
-        
-        # Timezone
+        """Initialize appointment service."""
         self.timezone = pytz.timezone(settings.CLINIC_TIMEZONE)
-        
-        logger.info("Appointment Service initialized")
+        logger.info("Appointment Service initialized with MongoDB")
     
-    def create_appointment(
+    def _get_collection(self):
+        """Get appointments collection."""
+        db = get_database()
+        return db.appointments if db is not None else None
+    
+    async def create_appointment(
         self,
         patient_name: str,
         patient_phone: str,
         appointment_date: date,
         appointment_time: time,
-        doctor: Doctor,  # Changed from doctor_name to doctor object
+        doctor_id: str,
+        doctor_name: str,
         reason: Optional[str] = None,
-        patient_email: Optional[str] = None
+        patient_email: Optional[str] = None,
+        duration_minutes: int = 30
     ) -> AppointmentResponse:
-        """
-        Create a new appointment.
-        
-        Args:
-            patient_name: Patient's full name
-            patient_phone: Patient's phone number
-            appointment_date: Date of appointment
-            appointment_time: Time of appointment
-            doctor: Doctor object
-            reason: Reason for visit
-            patient_email: Patient's email (optional)
-            
-        Returns:
-            AppointmentResponse with success status and appointment details
-        """
+        """Create a new appointment in MongoDB."""
         try:
-            # Check if doctor is available on this day
-            day_of_week = appointment_date.weekday()
-            if not doctor.is_available_on_day(day_of_week):
+            collection = self._get_collection()
+            if collection is None:
+                logger.warning("MongoDB not connected")
                 return AppointmentResponse(
                     success=False,
-                    message=f"Dr. {doctor.name} is not available on this day",
-                    error="Doctor not available"
+                    message="Database not available",
+                    error="MongoDB not connected"
                 )
             
             # Check if slot is available
-            if not self._is_slot_available(appointment_date, appointment_time, doctor.doctor_id):
+            if not await self._is_slot_available(appointment_date, appointment_time, doctor_id):
                 return AppointmentResponse(
                     success=False,
                     message="This time slot is not available",
                     error="Slot already booked"
                 )
             
-            # Create appointment
-            appointment = Appointment(
-                patient_name=patient_name,
-                patient_phone=patient_phone,
-                patient_email=patient_email,
-                appointment_date=appointment_date,
-                appointment_time=appointment_time,
-                doctor_name=f"Dr. {doctor.name}",
-                doctor_id=doctor.doctor_id,  # Store doctor ID
-                reason=reason,
-                status=AppointmentStatus.SCHEDULED,
-                duration_minutes=doctor.consultation_duration
-            )
+            # Create appointment document
+            appointment_doc = {
+                "patient_name": patient_name,
+                "patient_phone": patient_phone,
+                "patient_email": patient_email,
+                "appointment_date": datetime.combine(appointment_date, datetime.min.time()),
+                "appointment_time": appointment_time.isoformat(),
+                "duration_minutes": duration_minutes,
+                "doctor_name": doctor_name,
+                "doctor_id": doctor_id,
+                "reason": reason,
+                "status": AppointmentStatus.SCHEDULED.value,
+                "created_at": datetime.now(),
+                "updated_at": datetime.now(),
+                "confirmed_at": None,
+                "conversation_id": None,
+                "notes": None
+            }
             
-            # Store appointment
-            self.appointments[appointment.appointment_id] = appointment
+            # Insert into MongoDB
+            result = await collection.insert_one(appointment_doc)
+            appointment_doc["_id"] = str(result.inserted_id)
             
-            # Mark slot as booked
-            self._mark_slot_booked(appointment_date, appointment_time, doctor.doctor_id)
+            # Convert to Appointment model
+            appointment = self._doc_to_model(appointment_doc)
             
-            logger.info(f"Appointment created: {appointment.appointment_id} with Dr. {doctor.name}")
+            logger.info(f"Appointment created in MongoDB: {appointment.appointment_id}")
             
             return AppointmentResponse(
                 success=True,
@@ -107,105 +100,122 @@ class AppointmentService:
                 error=str(e)
             )
     
-    def get_appointment(self, appointment_id: str) -> Optional[Appointment]:
-        """Get appointment by ID."""
-        return self.appointments.get(appointment_id)
+    async def get_appointment(self, appointment_id: str) -> Optional[Appointment]:
+        """Get appointment by ID from MongoDB."""
+        try:
+            collection = self._get_collection()
+            if collection is None:
+                logger.warning("MongoDB not connected")
+                return None
+            
+            doc = await collection.find_one({"_id": ObjectId(appointment_id)})
+            
+            if doc:
+                return self._doc_to_model(doc)
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error getting appointment: {e}")
+            return None
     
-    def get_all_appointments(self) -> List[Appointment]:
-        """Get all appointments."""
-        return list(self.appointments.values())
+    async def get_all_appointments(self) -> List[Appointment]:
+        """Get all appointments from MongoDB."""
+        try:
+            collection = self._get_collection()
+            if collection is None:
+                logger.warning("MongoDB not connected")
+                return []
+            
+            cursor = collection.find({})
+            
+            appointments = []
+            async for doc in cursor:
+                appointments.append(self._doc_to_model(doc))
+            
+            return appointments
+            
+        except Exception as e:
+            logger.error(f"Error getting appointments: {e}")
+            return []
     
-    def get_appointments_by_doctor(self, doctor_id: str) -> List[Appointment]:
-        """Get all appointments for a specific doctor."""
-        return [
-            apt for apt in self.appointments.values()
-            if apt.doctor_id == doctor_id
-        ]
-    
-    def update_appointment_status(
+    async def update_appointment_status(
         self,
         appointment_id: str,
         status: AppointmentStatus
     ) -> AppointmentResponse:
-        """Update appointment status."""
-        appointment = self.appointments.get(appointment_id)
-        
-        if not appointment:
+        """Update appointment status in MongoDB."""
+        try:
+            collection = self._get_collection()
+            if collection is None:
+                logger.warning("MongoDB not connected")
+                return AppointmentResponse(
+                    success=False,
+                    message="Database not available",
+                    error="MongoDB not connected"
+                )
+            
+            update_data = {
+                "status": status.value,
+                "updated_at": datetime.now()
+            }
+            
+            if status == AppointmentStatus.CONFIRMED:
+                update_data["confirmed_at"] = datetime.now()
+            
+            result = await collection.update_one(
+                {"_id": ObjectId(appointment_id)},
+                {"$set": update_data}
+            )
+            
+            if result.modified_count == 0:
+                return AppointmentResponse(
+                    success=False,
+                    message="Appointment not found",
+                    error="Invalid appointment ID"
+                )
+            
+            # Get updated appointment
+            appointment = await self.get_appointment(appointment_id)
+            
+            logger.info(f"Appointment {appointment_id} status updated to {status}")
+            
+            return AppointmentResponse(
+                success=True,
+                message=f"Appointment status updated to {status}",
+                appointment=appointment
+            )
+            
+        except Exception as e:
+            logger.error(f"Error updating appointment: {e}")
             return AppointmentResponse(
                 success=False,
-                message="Appointment not found",
-                error="Invalid appointment ID"
+                message="Failed to update appointment",
+                error=str(e)
             )
-        
-        appointment.status = status
-        appointment.updated_at = datetime.now()
-        
-        if status == AppointmentStatus.CONFIRMED:
-            appointment.confirmed_at = datetime.now()
-        
-        logger.info(f"Appointment {appointment_id} status updated to {status}")
-        
-        return AppointmentResponse(
-            success=True,
-            message=f"Appointment status updated to {status}",
-            appointment=appointment
+    
+    async def cancel_appointment(self, appointment_id: str) -> AppointmentResponse:
+        """Cancel an appointment in MongoDB."""
+        return await self.update_appointment_status(
+            appointment_id,
+            AppointmentStatus.CANCELLED
         )
     
-    def cancel_appointment(self, appointment_id: str) -> AppointmentResponse:
-        """Cancel an appointment."""
-        appointment = self.appointments.get(appointment_id)
-        
-        if not appointment:
-            return AppointmentResponse(
-                success=False,
-                message="Appointment not found",
-                error="Invalid appointment ID"
-            )
-        
-        # Free up the slot
-        self._free_slot(
-            appointment.appointment_date,
-            appointment.appointment_time,
-            appointment.doctor_id
-        )
-        
-        # Update status
-        appointment.status = AppointmentStatus.CANCELLED
-        appointment.updated_at = datetime.now()
-        
-        logger.info(f"Appointment {appointment_id} cancelled")
-        
-        return AppointmentResponse(
-            success=True,
-            message="Appointment cancelled successfully",
-            appointment=appointment
-        )
-    
-    def get_available_slots(
+    async def get_available_slots(
         self,
-        doctor: Doctor,
+        doctor_id: str,
+        doctor_name: str,
         start_date: date,
         num_days: int = 7
     ) -> List[AppointmentSlot]:
-        """
-        Get available appointment slots for a specific doctor.
-        
-        Args:
-            doctor: Doctor object
-            start_date: Starting date to check
-            num_days: Number of days to look ahead
-            
-        Returns:
-            List of available slots
-        """
+        """Get available appointment slots."""
         available_slots = []
         
         for day_offset in range(num_days):
             check_date = start_date + timedelta(days=day_offset)
             day_of_week = check_date.weekday()
             
-            # Check if doctor is available on this day
-            if not doctor.is_available_on_day(day_of_week):
+            # Skip weekends
+            if day_of_week >= 5:
                 continue
             
             # Generate slots for this day
@@ -215,45 +225,33 @@ class AppointmentService:
                 slot_time = time(current_hour, 0)
                 
                 # Check if slot is available
-                if self._is_slot_available(check_date, slot_time, doctor.doctor_id):
+                if await self._is_slot_available(check_date, slot_time, doctor_id):
                     slot = AppointmentSlot(
                         date=check_date,
                         start_time=slot_time,
-                        end_time=time(
-                            (current_hour + 1) % 24, 0
-                        ),
-                        doctor_name=f"Dr. {doctor.name}",
-                        doctor_id=doctor.doctor_id,
+                        end_time=time((current_hour + 1) % 24, 0),
+                        doctor_name=doctor_name,
+                        doctor_id=doctor_id,
                         is_available=True
                     )
                     available_slots.append(slot)
                 
                 current_hour += 1
         
-        logger.info(f"Found {len(available_slots)} available slots for Dr. {doctor.name}")
+        logger.info(f"Found {len(available_slots)} available slots for {doctor_name}")
         return available_slots
     
-    def find_slots_by_preference(
+    async def find_slots_by_preference(
         self,
-        doctor: Doctor,
+        doctor_id: str,
+        doctor_name: str,
         preferred_date: Optional[date] = None,
         preferred_time: Optional[str] = None,
-        num_slots: int = 3
+        num_slots: int = 5
     ) -> List[AppointmentSlot]:
-        """
-        Find slots matching user preferences for a specific doctor.
-        
-        Args:
-            doctor: Doctor object
-            preferred_date: Preferred date (or start from today)
-            preferred_time: Preferred time of day ("morning", "afternoon", "evening")
-            num_slots: Number of slots to return
-            
-        Returns:
-            List of matching slots
-        """
+        """Find slots matching preferences."""
         start_date = preferred_date or date.today()
-        all_slots = self.get_available_slots(doctor, start_date, num_days=14)
+        all_slots = await self.get_available_slots(doctor_id, doctor_name, start_date, num_days=14)
         
         # Filter by time preference
         if preferred_time:
@@ -270,49 +268,70 @@ class AppointmentService:
             
             all_slots = filtered_slots
         
-        # Return requested number of slots
         return all_slots[:num_slots]
     
-    def _is_slot_available(
+    async def _is_slot_available(
         self,
         appointment_date: date,
         appointment_time: time,
         doctor_id: str
     ) -> bool:
-        """Check if a specific slot is available for a doctor."""
-        for booked in self.booked_slots:
-            if (booked["date"] == appointment_date and 
-                booked["time"] == appointment_time and
-                booked["doctor_id"] == doctor_id):
+        """Check if a slot is available in MongoDB."""
+        try:
+            collection = self._get_collection()
+            if collection is None:
+                logger.warning("MongoDB not connected")
                 return False
-        return True
+            
+            # Check for existing appointment
+            existing = await collection.find_one({
+                "doctor_id": doctor_id,
+                "appointment_date": datetime.combine(appointment_date, datetime.min.time()),
+                "appointment_time": appointment_time.isoformat(),
+                "status": {"$in": [
+                    AppointmentStatus.SCHEDULED.value,
+                    AppointmentStatus.CONFIRMED.value
+                ]}
+            })
+            
+            return existing is None
+            
+        except Exception as e:
+            logger.error(f"Error checking slot availability: {e}")
+            return False
     
-    def _mark_slot_booked(
-        self,
-        appointment_date: date,
-        appointment_time: time,
-        doctor_id: str
-    ):
-        """Mark a slot as booked for a specific doctor."""
-        self.booked_slots.append({
-            "date": appointment_date,
-            "time": appointment_time,
-            "doctor_id": doctor_id
-        })
-    
-    def _free_slot(
-        self,
-        appointment_date: date,
-        appointment_time: time,
-        doctor_id: str
-    ):
-        """Free up a booked slot for a specific doctor."""
-        self.booked_slots = [
-            slot for slot in self.booked_slots
-            if not (slot["date"] == appointment_date and 
-                   slot["time"] == appointment_time and
-                   slot["doctor_id"] == doctor_id)
-        ]
+    def _doc_to_model(self, doc: Dict) -> Appointment:
+        """Convert MongoDB document to Appointment model."""
+        # Parse date
+        appointment_date = doc["appointment_date"]
+        if isinstance(appointment_date, datetime):
+            appointment_date = appointment_date.date()
+        
+        # Parse time
+        appointment_time_str = doc["appointment_time"]
+        if isinstance(appointment_time_str, str):
+            appointment_time = time.fromisoformat(appointment_time_str)
+        else:
+            appointment_time = appointment_time_str
+        
+        return Appointment(
+            appointment_id=str(doc["_id"]),
+            patient_name=doc["patient_name"],
+            patient_phone=doc["patient_phone"],
+            patient_email=doc.get("patient_email"),
+            appointment_date=appointment_date,
+            appointment_time=appointment_time,
+            duration_minutes=doc.get("duration_minutes", 30),
+            doctor_name=doc["doctor_name"],
+            doctor_id=doc["doctor_id"],
+            reason=doc.get("reason"),
+            status=AppointmentStatus(doc["status"]),
+            created_at=doc["created_at"],
+            updated_at=doc["updated_at"],
+            confirmed_at=doc.get("confirmed_at"),
+            conversation_id=doc.get("conversation_id"),
+            notes=doc.get("notes")
+        )
 
 
 # Create singleton instance

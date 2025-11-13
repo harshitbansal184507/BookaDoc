@@ -27,14 +27,12 @@ class DoctorAvailability(BaseModel):
 
 
 class Doctor(BaseModel):
-    """Doctor model."""
     doctor_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str = Field(..., min_length=2, max_length=100)
     specialization: Specialization
     qualification: str  # e.g., "MBBS, MD"
     experience_years: int = Field(..., ge=0)
     
-    # Contact
     email: Optional[str] = None
     phone: Optional[str] = None
     
@@ -47,7 +45,6 @@ class Doctor(BaseModel):
     is_active: bool = True
     is_accepting_new_patients: bool = True
     
-    # Additional Info
     bio: Optional[str] = None
     languages: List[str] = ["English", "Hindi"]
     
@@ -55,7 +52,6 @@ class Doctor(BaseModel):
         return f"Dr. {self.name} ({self.specialization})"
     
     def is_available_on_day(self, day: int) -> bool:
-        """Check if doctor is available on a specific day."""
         return day in self.available_days and self.is_active
 
 

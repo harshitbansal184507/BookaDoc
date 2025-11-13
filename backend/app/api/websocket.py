@@ -9,6 +9,7 @@ from app.models.conversation import (
     AgentType,
     WebSocketMessage
 )
+from app.agents.orchestrator import OrchestratorAgent, WorkflowState
 from app.utils.logger import app_logger as logger
 
 router = APIRouter()
@@ -25,6 +26,7 @@ class ConnectionManager:
     
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
+        self.orchestrator = OrchestratorAgent()
     
     async def connect(self, conversation_id: str, websocket: WebSocket):
         """Accept and store a new WebSocket connection."""
@@ -71,13 +73,30 @@ async def websocket_endpoint(websocket: WebSocket, conversation_id: str):
     else:
         context = conversations[conversation_id]
     
-    # Send welcome message
-    await manager.send_message(conversation_id, {
-        "type": "connected",
-        "conversation_id": conversation_id,
-        "message": "Connected to appointment booking assistant",
-        "timestamp": datetime.now().isoformat()
-    })
+    # Send welcome message with initial greeting
+    try:
+        initial_greeting = await manager.orchestrator.start_conversation()
+        
+        await manager.send_message(conversation_id, {
+            "type": "connected",
+            "conversation_id": conversation_id,
+            "message": "Connected to BookaDoc appointment assistant",
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        # Send initial greeting from receptionist
+        await manager.send_message(conversation_id, {
+            "type": "agent_message",
+            "content": initial_greeting,
+            "agent_type": "receptionist",
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        # Add to conversation history
+        context.add_message("assistant", initial_greeting, AgentType.RECEPTIONIST)
+        
+    except Exception as e:
+        logger.error(f"Error sending initial greeting: {e}")
     
     try:
         while True:
@@ -108,7 +127,7 @@ async def handle_message(
     context: ConversationContext
 ):
     """
-    Handle incoming WebSocket message.
+    Handle incoming WebSocket message using orchestrator.
     
     Args:
         conversation_id: Conversation ID
@@ -124,64 +143,112 @@ async def handle_message(
         # Add user message to context
         context.add_message("user", content)
         
-        # Echo back (placeholder - will be replaced by agent in Phase 5)
+        # Send typing indicator
+        await manager.send_message(conversation_id, {
+            "type": "typing",
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        # Prepare conversation context for orchestrator
+        conversation_context = {
+            "messages": context.get_conversation_history(),
+            "patient_info": {
+                "patient_name": context.patient_name,
+                "patient_phone": context.patient_phone,
+                "patient_email": context.patient_email,
+                "reason": context.reason,
+                "preferred_date": context.preferred_date,
+                "preferred_time": context.preferred_time,
+                "doctor_preference": context.doctor_preference
+            },
+            "available_slots": context.proposed_slots,
+            "selected_slot": None,  # Will be set during workflow
+            "workflow_state": _map_conversation_state_to_workflow(context.state),
+            "current_agent": context.current_agent,
+            "has_required_info": context.has_required_info(),
+            "awaiting_confirmation": context.state == ConversationState.CONFIRMING
+        }
+        
+        # Process through orchestrator
+        try:
+            result = await manager.orchestrator.process_message(
+                user_message=content,
+                conversation_context=conversation_context
+            )
+            
+            # Update context with results
+            _update_context_from_result(context, result)
+            
+            # Send agent response
+            await manager.send_message(conversation_id, {
+                "type": "agent_message",
+                "content": result.get("agent_response", ""),
+                "agent_type": result.get("current_agent", "receptionist"),
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # Add agent message to context
+            context.add_message(
+                "assistant",
+                result.get("agent_response", ""),
+                result.get("current_agent", AgentType.RECEPTIONIST)
+            )
+            
+            # Send status update
+            await manager.send_message(conversation_id, {
+                "type": "status_update",
+                "state": _map_workflow_to_conversation_state(result.get("workflow_state")),
+                "workflow_state": result.get("workflow_state"),
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # If slots are available, send them separately
+            if result.get("available_slots"):
+                await manager.send_message(conversation_id, {
+                    "type": "slots_available",
+                    "slots": result.get("available_slots", []),
+                    "timestamp": datetime.now().isoformat()
+                })
+            
+            # If appointment is completed
+            if result.get("workflow_state") == WorkflowState.COMPLETED:
+                await manager.send_message(conversation_id, {
+                    "type": "appointment_confirmed",
+                    "appointment_id": result.get("appointment_id"),
+                    "timestamp": datetime.now().isoformat()
+                })
+                context.state = ConversationState.COMPLETED
+                context.appointment_id = result.get("appointment_id")
+            
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+            await manager.send_message(conversation_id, {
+                "type": "error",
+                "message": "I apologize, but I encountered an error. Please try again.",
+                "timestamp": datetime.now().isoformat()
+            })
+    
+    elif message_type == "reset_conversation":
+        # Reset conversation
+        context.state = ConversationState.INITIATED
+        context.current_agent = AgentType.RECEPTIONIST
+        context.messages = []
+        context.patient_name = None
+        context.patient_phone = None
+        context.reason = None
+        
+        await manager.send_message(conversation_id, {
+            "type": "conversation_reset",
+            "message": "Conversation has been reset",
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        # Send new greeting
+        greeting = await manager.orchestrator.start_conversation()
         await manager.send_message(conversation_id, {
             "type": "agent_message",
-            "content": f"I received your message: {content}",
+            "content": greeting,
             "agent_type": "receptionist",
-            "timestamp": datetime.now().isoformat()
-        })
-        
-        # Send status update
-        await manager.send_message(conversation_id, {
-            "type": "status_update",
-            "state": context.state,
-            "message": "Processing your request...",
-            "timestamp": datetime.now().isoformat()
-        })
-    
-    elif message_type == "get_slots":
-        # Handle slot request
-        from app.services.appointment_service import appointment_service
-        from datetime import date
-        
-        slots = appointment_service.get_available_slots(date.today(), num_days=3)
-        
-        await manager.send_message(conversation_id, {
-            "type": "slot_proposal",
-            "slots": [
-                {
-                    "slot_id": slot.slot_id,
-                    "date": slot.date.isoformat(),
-                    "start_time": slot.start_time.isoformat(),
-                    "formatted": str(slot)
-                }
-                for slot in slots[:5]
-            ],
-            "timestamp": datetime.now().isoformat()
-        })
-    
-    elif message_type == "select_slot":
-        # Handle slot selection
-        slot_id = message_data.get("slot_id")
-        context.selected_slot_id = slot_id
-        context.state = ConversationState.CONFIRMING
-        
-        await manager.send_message(conversation_id, {
-            "type": "confirmation_request",
-            "slot_id": slot_id,
-            "message": "Please confirm your appointment details",
-            "timestamp": datetime.now().isoformat()
-        })
-    
-    elif message_type == "confirm_appointment":
-        # Handle appointment confirmation
-        context.state = ConversationState.COMPLETED
-        
-        await manager.send_message(conversation_id, {
-            "type": "appointment_confirmed",
-            "message": "Your appointment has been confirmed!",
-            "appointment_id": "APT-12345",  # Placeholder
             "timestamp": datetime.now().isoformat()
         })
     
@@ -191,3 +258,69 @@ async def handle_message(
             "message": f"Unknown message type: {message_type}",
             "timestamp": datetime.now().isoformat()
         })
+
+
+def _map_conversation_state_to_workflow(state: ConversationState) -> WorkflowState:
+    """Map ConversationState to WorkflowState."""
+    mapping = {
+        ConversationState.INITIATED: WorkflowState.START,
+        ConversationState.GATHERING_INFO: WorkflowState.GATHERING_INFO,
+        ConversationState.CHECKING_AVAILABILITY: WorkflowState.FINDING_SLOTS,
+        ConversationState.PROPOSING_SLOTS: WorkflowState.PRESENTING_SLOTS,
+        ConversationState.CONFIRMING: WorkflowState.CONFIRMING,
+        ConversationState.COMPLETED: WorkflowState.COMPLETED,
+        ConversationState.FAILED: WorkflowState.ERROR
+    }
+    return mapping.get(state, WorkflowState.START)
+
+
+def _map_workflow_to_conversation_state(workflow_state) -> ConversationState:
+    """Map WorkflowState to ConversationState."""
+    if isinstance(workflow_state, str):
+        workflow_state = WorkflowState(workflow_state)
+    
+    mapping = {
+        WorkflowState.START: ConversationState.INITIATED,
+        WorkflowState.GATHERING_INFO: ConversationState.GATHERING_INFO,
+        WorkflowState.FINDING_SLOTS: ConversationState.CHECKING_AVAILABILITY,
+        WorkflowState.PRESENTING_SLOTS: ConversationState.PROPOSING_SLOTS,
+        WorkflowState.CONFIRMING: ConversationState.CONFIRMING,
+        WorkflowState.FINALIZING: ConversationState.CONFIRMING,
+        WorkflowState.COMPLETED: ConversationState.COMPLETED,
+        WorkflowState.ERROR: ConversationState.FAILED
+    }
+    return mapping.get(workflow_state, ConversationState.INITIATED)
+
+
+def _update_context_from_result(context: ConversationContext, result: Dict):
+    """Update conversation context with orchestrator result."""
+    # Update patient info
+    if result.get("patient_info"):
+        info = result["patient_info"]
+        context.patient_name = info.get("patient_name") or context.patient_name
+        context.patient_phone = info.get("patient_phone") or context.patient_phone
+        context.patient_email = info.get("patient_email") or context.patient_email
+        context.reason = info.get("reason") or context.reason
+        context.preferred_date = info.get("preferred_date") or context.preferred_date
+        context.preferred_time = info.get("preferred_time") or context.preferred_time
+        context.doctor_preference = info.get("doctor_preference") or context.doctor_preference
+    
+    # Update slots
+    if result.get("available_slots"):
+        context.proposed_slots = result["available_slots"]
+    
+    # Update selected slot
+    if result.get("selected_slot"):
+        context.selected_slot_id = result["selected_slot"].get("slot_id")
+    
+    # Update state
+    if result.get("workflow_state"):
+        context.state = _map_workflow_to_conversation_state(result["workflow_state"])
+    
+    # Update current agent
+    if result.get("current_agent"):
+        context.current_agent = result["current_agent"]
+    
+    # Update appointment ID
+    if result.get("appointment_id"):
+        context.appointment_id = result["appointment_id"]

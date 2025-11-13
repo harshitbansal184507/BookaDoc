@@ -15,7 +15,10 @@ class Settings(BaseSettings):
     # Server
     HOST: str = "0.0.0.0"
     PORT: int = 8000
-    
+    #MONGODB SETTINGS
+
+    MONGODB_URL : str = os.getenv("MONGODB_URL", "mongodb+srv://<your-fallback-url>")
+    MONGODB_DB_NAME: str = "bookadoc_db"
     # CORS
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
     

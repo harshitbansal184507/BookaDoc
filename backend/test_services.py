@@ -29,6 +29,7 @@ def test_appointment_service():
     slots = appointment_service.get_available_slots(
         start_date=date.today(),
         num_days=3
+        , doctor="Amit Verma"
     )
     print(f"✓ Found {len(slots)} available slots")
     
