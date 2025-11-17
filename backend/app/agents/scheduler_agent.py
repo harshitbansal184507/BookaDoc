@@ -81,7 +81,6 @@ Which option works best for you? Or would you like to see more times?"
         """Infer medical specialization from reason for visit."""
         reason_lower = reason.lower()
         
-        # Keywords for different specializations
         specialization_keywords = {
             Specialization.CARDIOLOGIST: ["heart", "chest pain", "cardiac", "blood pressure", "cholesterol"],
             Specialization.DERMATOLOGIST: ["skin", "rash", "acne", "eczema", "mole", "hair"],
