@@ -56,7 +56,6 @@ class OrchestratorAgent:
         self.scheduler = SchedulerAgent()
         self.confirmation = ConfirmationAgent()
         
-        # Initialize workflow graph
         self.workflow = self._build_workflow()
         
         logger.info("Orchestrator initialized with LangGraph workflow")
