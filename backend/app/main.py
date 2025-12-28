@@ -16,7 +16,6 @@ async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
     logger.info(f"Environment: {settings.ENVIRONMENT}")
     
-    # Connect to MongoDB
     try:
         logger.info("Connecting to MongoDB Atlas...")
         await connect_to_mongo()

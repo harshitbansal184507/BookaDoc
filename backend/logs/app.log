@@ -2384,3 +2384,57 @@
 2025-11-12 13:28:52 | INFO     | app.agents.orchestrator:_present_slots_node:211 - Node: Presenting slots
 2025-11-12 13:28:52 | INFO     | app.agents.orchestrator:process_message:433 - Workflow transition: start -> WorkflowState.AWAITING_SELECTION | Agent: AgentType.SCHEDULER
 2025-11-13 12:00:51 | INFO     | app.db.mongodb:close_mongo_connection:45 - Closed MongoDB connection
+2025-12-23 08:37:15 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-12-23 08:37:15 | INFO     | app.services.llm_service:__init__:15 - LLM Service initialized with OpenAI model: gpt-4o-mini
+2025-12-23 08:37:20 | INFO     | app.services.appointment_service:__init__:23 - Appointment Service initialized with MongoDB
+2025-12-23 08:37:20 | INFO     | app.services.doctor_service:__init__:12 - Doctor Service initialized with MongoDB
+2025-12-23 08:37:22 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Receptionist' initialized
+2025-12-23 08:37:22 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Scheduler' initialized
+2025-12-23 08:37:22 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Confirmation' initialized
+2025-12-23 08:37:22 | INFO     | app.agents.orchestrator:__init__:61 - Orchestrator initialized with LangGraph workflow
+2025-12-23 08:37:23 | INFO     | app.db.mongodb:connect_to_mongo:26 - Connected to MongoDB: bookadoc_db
+2025-12-23 08:37:24 | INFO     | app.db.mongodb:create_indexes:70 - MongoDB indexes created
+2025-12-23 08:37:27 | INFO     | app.agents.orchestrator:start_conversation:522 - Conversation started with greeting
+2025-12-23 08:38:03 | INFO     | app.agents.orchestrator:_gather_info_node:122 - Node: Gathering information
+2025-12-23 08:38:09 | INFO     | app.agents.receptionist_agent:extract_information:74 - Extracted info: {'patient_name': 'Harshit Bansal', 'patient_phone': '7986692997', 'reason': 'cough', 'doctor_preference': None, 'preferred_date': None, 'preferred_time': 'morning'}
+2025-12-23 08:38:09 | INFO     | app.agents.orchestrator:_gather_info_node:160 - Required info collected: {'patient_name': 'Harshit Bansal', 'patient_phone': '7986692997', 'reason': 'cough', 'preferred_time': 'morning'}
+2025-12-23 08:38:09 | INFO     | app.agents.orchestrator:_find_slots_node:177 - Node: Finding slots
+2025-12-23 08:38:12 | INFO     | app.services.appointment_service:get_available_slots:241 - Found 80 available slots for Dr. Rajesh Kumar
+2025-12-23 08:38:12 | INFO     | app.agents.scheduler_agent:get_available_slots:152 - Found 5 slots for Rajesh Kumar
+2025-12-23 08:38:12 | INFO     | app.agents.orchestrator:_find_slots_node:196 - Found 5 available slots
+2025-12-23 08:38:12 | INFO     | app.agents.orchestrator:_present_slots_node:210 - Node: Presenting slots
+2025-12-23 08:38:12 | INFO     | app.agents.orchestrator:process_message:432 - Workflow transition: start -> WorkflowState.AWAITING_SELECTION | Agent: AgentType.SCHEDULER
+2025-12-23 08:38:27 | INFO     | app.agents.orchestrator:_await_selection_node:234 - Node: Awaiting slot selection
+2025-12-23 08:38:27 | INFO     | app.agents.orchestrator:_await_selection_node:247 - Slot selected: {'slot_id': '266bac7d-482d-497e-baed-0c765e73c8a5', 'doctor_name': 'Dr. Rajesh Kumar', 'doctor_id': 'doc-1', 'date': '2025-12-23', 'time': '2025-12-23T09:00:00', 'formatted': 'December 23, 2025 at 09:00 AM', 'doctor_specialization': 'General Physician'}
+2025-12-23 08:38:27 | INFO     | app.agents.orchestrator:_confirm_node:265 - Node: Confirming appointment
+2025-12-23 08:38:27 | INFO     | app.agents.orchestrator:process_message:432 - Workflow transition: WorkflowState.AWAITING_SELECTION -> WorkflowState.CONFIRMING | Agent: AgentType.CONFIRMATION
+2025-12-23 08:38:34 | INFO     | app.agents.orchestrator:_finalize_node:294 - Node: Finalizing appointment
+2025-12-23 08:38:34 | INFO     | app.services.appointment_service:create_appointment:87 - Appointment created in MongoDB: 694a07b23bb50125dde2d9a5
+2025-12-23 08:38:34 | INFO     | app.agents.confirmation_agent:finalize_appointment:130 - Appointment confirmed: 694a07b23bb50125dde2d9a5
+2025-12-23 08:38:34 | INFO     | app.agents.orchestrator:_finalize_node:315 - Appointment finalized: 694a07b23bb50125dde2d9a5
+2025-12-23 08:38:34 | INFO     | app.agents.orchestrator:process_message:432 - Workflow transition: WorkflowState.CONFIRMING -> WorkflowState.COMPLETED | Agent: AgentType.CONFIRMATION
+2025-12-23 11:06:34 | INFO     | app.db.mongodb:close_mongo_connection:45 - Closed MongoDB connection
+2025-12-23 11:21:50 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-12-23 11:21:51 | INFO     | app.services.llm_service:__init__:15 - LLM Service initialized with OpenAI model: gpt-4o-mini
+2025-12-23 11:21:52 | INFO     | app.services.appointment_service:__init__:23 - Appointment Service initialized with MongoDB
+2025-12-23 11:21:52 | INFO     | app.services.doctor_service:__init__:12 - Doctor Service initialized with MongoDB
+2025-12-23 11:21:53 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Receptionist' initialized
+2025-12-23 11:21:53 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Scheduler' initialized
+2025-12-23 11:21:53 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Confirmation' initialized
+2025-12-23 11:21:53 | INFO     | app.agents.orchestrator:__init__:61 - Orchestrator initialized with LangGraph workflow
+2025-12-23 11:21:56 | INFO     | app.db.mongodb:connect_to_mongo:26 - Connected to MongoDB: bookadoc_db
+2025-12-23 11:21:57 | INFO     | app.db.mongodb:create_indexes:70 - MongoDB indexes created
+2025-12-23 11:21:59 | INFO     | app.agents.orchestrator:start_conversation:522 - Conversation started with greeting
+2025-12-23 11:29:17 | INFO     | app.db.mongodb:close_mongo_connection:45 - Closed MongoDB connection
+2025-12-23 11:29:23 | INFO     | app.utils.logger:setup_logger:30 - Logger initialized - Level: INFO
+2025-12-23 11:29:23 | INFO     | app.services.llm_service:__init__:15 - LLM Service initialized with OpenAI model: gpt-4o-mini
+2025-12-23 11:29:24 | INFO     | app.services.appointment_service:__init__:23 - Appointment Service initialized with MongoDB
+2025-12-23 11:29:24 | INFO     | app.services.doctor_service:__init__:12 - Doctor Service initialized with MongoDB
+2025-12-23 11:29:26 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Receptionist' initialized
+2025-12-23 11:29:26 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Scheduler' initialized
+2025-12-23 11:29:26 | INFO     | app.agents.base_agent:__init__:17 - Agent 'Confirmation' initialized
+2025-12-23 11:29:26 | INFO     | app.agents.orchestrator:__init__:61 - Orchestrator initialized with LangGraph workflow
+2025-12-23 11:29:30 | INFO     | app.db.mongodb:connect_to_mongo:26 - Connected to MongoDB: bookadoc_db
+2025-12-23 11:29:31 | INFO     | app.db.mongodb:create_indexes:70 - MongoDB indexes created
+2025-12-23 11:29:35 | INFO     | app.agents.orchestrator:start_conversation:522 - Conversation started with greeting
+2025-12-28 21:17:45 | INFO     | app.db.mongodb:close_mongo_connection:45 - Closed MongoDB connection
